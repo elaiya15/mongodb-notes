@@ -1,0 +1,287 @@
+CLIENT <=> SERVER <=> DATABASE
+
+User => Server => Database 
+
+DBMS => Relational and Non-Relational
+
+
+Relational => Table => SQL or SEQUEL
+SQL => Structured Query Language
+SEQUEL => Structured English QUEry Language
+Example - MySQL, SQLServer, Oracle etc.,
+User => Post
+
+Non-Relational => JSON => MongoDB Functions 
+Example - MongoDB, CouchDB, Cassandra etc.,
+MongoDB Tools: MongoDB Compass, NoSQL Booster, Stdio 3T
+
+
+Database Sturucture:
+Tables - Collections
+Columns - Fields
+Rows - Documents
+
+No DDL things => Each document can have any fields.
+
+User:
+{
+    name: "XXX",
+},
+{
+    name: "yyy",
+    city: "Chennai"
+}
+
+Mentor:
+{
+    name: 'AAA',
+    experience: '2years'
+},
+{
+    name: 'BBB',
+    age: 40
+}
+
+Default Port - 27017
+
+
+CREATING/SWITCHING TO DB :
+    USE <database_name>
+        -   use guvi
+
+DELETING DATABASE :
+    db.dropDatabase();
+
+CREATE COLLECTION :
+    db.createCollection("<collection_name>")
+        -   db.createCollection("posts");
+
+DROP COLLECTION :
+    db.<collection_name>.drop();
+        -   db.posts.drop();
+
+
+DATA TYPES :
+String - "dasasd", "dadas"
+Integer - 12, 342
+Boolean - True, False
+Array - [1,2,3], [{ name: "guvi" }, { name: "Test" }]
+Object - { age: 21 }
+Date
+Double - 34.44, 43.43242
+Timestamp
+
+21dafvds3432fsd - 12 Bytes
+4 Bytes - Current Timestamp => Time of record inserted
+3 Bytes - Machine Id
+2 Bytes - Process Id
+3 Bytes - Random Number
+
+CRUD :
+CREATE :
+    db.<collection_name>.insertOne(); // Insert Single Doc
+    db.<collection_name>.insertMany([]); // Insert Multiple Docs
+    db.<collection_name>.insert(); // Insert Single or Multiple Docs
+
+READ :
+    db.<collection_name>.findOne(); // Get Single Doc
+    db.<collection_name>.find(); // Get Multiple Docs
+
+    db.posts.find({ userId: 1 });
+    // SELECT * FROM posts WHERE userId = 1;
+
+    db.posts.findOne({ userId: 1 });
+    // SELECT * FROM posts WHERE userId = 1 LIMIT 1;
+
+UPDATE :
+    db.<collection_name>.updateOne({ <where> }, { $set:{ <new value> } }); // Update Single Doc
+    db.<collection_name>.updateMany({ <where> }, { $set: <new value> }); // Update Multiple Docs
+    db.<collection_name>.update({ <where> }, { $set: <new value> }); // Update Single Doc
+    db.<collection_name>.update({ <where> }, { $set: <new value> }, { multi: true }); // Update Multiple Doc
+    db.<collection_name>.findOneAndUpdate({ <where> }, { $set: <new value> }); // Update Single Doc & Retrieve Old Doc
+    db.<collection_name>.findOneAndUpdate({ <where> }, { $set: <new value> }, { returnNewDocument: true }); // Update Single Doc & Retrieve Updated Doc
+
+DELETE :
+    db.<collection_name>.remove({}); // Delete docs based on condition
+
+WHERE :
+    db.<collection_name>.find({ <condition>: <value> });
+    db.posts.find({ userId: 10 });
+
+AND:
+    db.<collection_name>.find({ $and : [{ <condition>: <value>}, { <condition>: <value>}]}); 
+    db.user.find({ $and : [ {name : 'DDD'}, {userId : 1} ] });
+
+OR:
+    db.<collection_name>.find({ $or : { <condition>: <value>}, { <condition>: <value>}}); 
+    db.user.find({ $or : [ {name : 'DDD'}, {userId : 1} ] });
+
+NOT EQUAL TO:
+    db.<collection_name>.find({ <condition> : {$ne : <value>}}); 
+    db.user.find({userId : {$ne: 1 }});
+
+LESS THAN:
+    db.<collection_name>.find({ <condition> : {$lt : <value>}}); 
+    db.user.find({likes : {$lt: 20 }});
+
+LESS THAN OR EQUAL TO:
+    db.<collection_name>.find({ <condition> : {$lte : <value>}}); 
+    db.user.find({likes : {$lte: 20 }});
+
+GREATER THAN:
+    db.<collection_name>.find({ <condition> : {$gt : <value>}}); 
+    db.user.find({likes : {$gt: 20 }});
+
+GREATER THAN OR EQUAL TO:
+    db.<collection_name>.find({ <condition> : {$gte : <value>}}); 
+    db.user.find({likes : {$gte: 20 }});
+
+IN:
+    db.<collection_name>.find({ <condition> : {$in : [<value>]}}); 
+    db.user.find({userId : {$in: [2] }});
+
+NOT IN:
+    db.<collection_name>.find({ <condition> : {$nin : [<value>]}}); 
+    db.user.find({userId : {$nin: [2] }});
+
+PROJECTION:
+    db.<collection_name>.find({<where_condition>}, {<field> : 1, <field> : 0})
+    db.user.find({userId : 2}, {name : 1,email:1, _id:0 });
+
+LIMIT:
+    db.<collection_name>.find({}).limit(<no>) // Print only the mentioned number of documents
+    db.user.find({}).limit(2)
+
+SKIP:
+    db.<collection_name>.find({}).skip(<no>) // Skip the mentioned number of documents
+    db.user.find({}).skip(2)
+
+SORT: 
+    db.<collection_name>.find({}).sort({<field> : 1}) // Sort the mentioned field, 1 => sort ascending; -1 => sort descending
+    db.user.find({}).sort({age: 1})
+
+COUNT:
+    db.<collection_name>.count() // Count the number of documents
+    db.user.count();
+    db.user.count({userId : 3}); // Count documents which is having user Id as 3
+
+DISTINCT:
+    db.<collection_name>.distinct("fields) // Remove the duplicates
+    db.user.distinct("userId") // Get all unique userId values
+
+AGGREGATE FUNCTIONS:
+group
+project
+match
+limit
+skip
+sort
+
+$group => sum(count)
+
+    db.user.aggregate([
+        {
+            $group: {
+                _id : "$userId",
+                noOfDocuments : {"$sum" : 1}
+            }
+        }
+    ])
+
+$group => $sum(likes)
+    db.user.aggregate([
+        {
+            $group: {
+                _id : "$userId",
+                sumOfLikes : {"$sum" : "$likes"}
+            }
+        }    
+    ])
+
+$group => $max(likes)
+    db.user.aggregate([
+        {
+            $group: {
+                _id : "$userId",
+                maxOfLikes : {"$max" : "$likes"}
+            }
+        }    
+    ])
+
+$group => $min(likes)
+    db.user.aggregate([
+        {
+            $group: {
+                _id : "$userId",
+                minOfLikes : {"$min" : "$likes"}
+            }
+        }    
+    ])
+
+$group => $avg(likes)
+    db.user.aggregate([
+        {
+            $group: {
+                _id : "$userId",
+                avgOfLikes : {"$avg" : "$likes"}
+            }
+        }    
+    ])
+
+$match // Matches the document  like where condition for aggregate FUNCTIONS
+    db.user.aggregate([
+        {
+            $match: {
+                userId : 2
+            }
+        }    
+    ])
+
+$project
+    db.user.aggregate([
+        {
+            $project: {
+                _id :0,
+                userId: 1,
+                email: 1,
+                NoOfLikes: "$likes",
+            }
+        }    
+    ])
+
+$skip // Skip the mentioned documents from last
+    db.user.aggregate([
+        {
+            $skip: 3
+        }    
+    ])
+
+$LIMIT // Print the no of documents mentioned from last
+    db.user.aggregate([
+        {
+            $limit: 3
+        }    
+    ])
+
+$sort  // Sort the documents based on given columns
+    db.user.aggregate([ 
+        {
+            $sort: {
+                userId : -1
+            }
+        }    
+    ])
+
+$lookup : To join with other collection
+db.employees.aggregate(
+    [
+        {
+            $lookup: {
+                from: 'user',
+                localField : 'name',
+                foreignField: 'name',
+                as: 'User Data'
+            }
+        }
+    ]
+)
